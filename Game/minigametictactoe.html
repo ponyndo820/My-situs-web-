@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Tic Tac Toe</title>
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #ff9ac2, #ffd6e8, #fff5fa);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+}
+
+#tic-tac-toe {
+  position: relative;
+  max-width: 370px;
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Text watermark di dalam game, pojok kiri atas */
+.watermark {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #c2185b;
+  padding: 3px 8px;
+  border-radius: 6px;
+  z-index: 10;
+}
+
+.back-btn {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #c2185b;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 18px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.back-btn:hover {
+  background: #a01549;
+}
+
+h2 {
+  color: #c2185a;
+  margin: 0 0 15px 0;
+  font-size: 24px;
+}
+
+.score-board {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.score-board span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.score-board.score-num {
+  font-size: 20px;
+  color: #c2185a;
+}
+
+.mode-select {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+
+.mode-btn {
+  background: #fff;
+  border: 2px solid #c2185b;
+  color: #c2185b;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.mode-btn.active,
+.mode-btn:hover {
+  background: #c2185b;
+  color: white;
+}
+
+.difficulty-select {
+  display: none;
+  gap: 8px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+
+.difficulty-select.show {
+  display: flex;
+}
+
+.difficulty-btn {
+  background: #fff;
+  border: 2px solid #2196f3;
+  color: #2196f3;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.difficulty-btn.active,
+.difficulty-btn:hover {
+  background: #2196f3;
+  color: white;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+#reset-score-btn {
+  background: #666;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#reset-score-btn:hover {
+  background: #444;
+}
+
+#restart-btn {
+  background: #c2185b;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#restart-btn:hover {
+  background: #a01549;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: #333;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.cell {
+  width: 100%;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cell:hover {
+  background: #ffeef5;
+}
+
+.cell.x {
+  color: #e91e63;
+}
+
+.cell.o {
+  color: #2196f3;
+}
+
+.cell.win {
+  background: #4caf50;
+  color: white;
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+ 0% { transform: scale(1); }
+ 50% { transform: scale(1.15); }
+ 100% { transform: scale(1); }
+}
+
+.status {
+  font-size: 18px;
+  font-weight: bold;
+  color: #c2185a;
+  min-height: 25px;
+}
+
+@media (max-width: 768px) {
+.back-btn {
+    display: flex;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="/ponyndo.html" class="back-btn">🔙</a>
+
+<div id="tic-tac-toe">
+  <div class="watermark">By Heart candy</div>
+
+  <h2>Tic Tac Toe</h2>
+
+  <div class="score-board">
+    <span>X<br><span class="score-num" id="score-x">0</span></span>
+    <span>Seri<br><span class="score-num" id="score-draw">0</span></span>
+    <span id="score-o-label">O<br><span class="score-num" id="score-o">0</span></span>
+  </div>
+
+  <div class="mode-select">
+    <button class="mode-btn active" data-mode="2p">Multi Player</button>
+    <button class="mode-btn" data-mode="bot">Single Player</button>
+  </div>
+
+  <div class="difficulty-select" id="difficulty">
+    <button class="difficulty-btn active" data-diff="easy">Mudah</button>
+    <button class="difficulty-btn" data-diff="hard">Sulit</button>
+  </div>
+
+  <div class="game-info">
+    <span>Giliran: <span id="turn">X</span></span>
+    <div style="display: flex; gap: 8px;">
+      <button id="reset-score-btn">Reset Score</button>
+      <button id="restart-btn">Restart</button>
+    </div>
+  </div>
+
+  <div id="board"></div>
+  <div class="status" id="status">Giliran X</div>
+</div>
+
+<script>
+const boardEl = document.getElementById('board');
+const turnEl = document.getElementById('turn');
+const statusEl = document.getElementById('status');
+const restartBtn = document.getElementById('restart-btn');
+const resetScoreBtn = document.getElementById('reset-score-btn');
+const modeBtns = document.querySelectorAll('.mode-btn');
+const diffBtns = document.querySelectorAll('.difficulty-btn');
+const difficultyDiv = document.getElementById('difficulty');
+const scoreOLabel = document.getElementById('score-o-label');
+
+const scoreXEl = document.getElementById('score-x');
+const scoreOEl = document.getElementById('score-o');
+const scoreDrawEl = document.getElementById('score-draw');
+
+let board = [];
+let currentPlayer = 'X';
+let gameActive = true;
+let gameMode = '2p';
+let difficulty = 'easy';
+
+let score = {
+  x: 0,
+  o: 0,
+  draw: 0
+};
+
+const winPatterns = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],
+  [0, 4, 8], [2, 4, 6]
+];
+
+function loadScore() {
+  const saved = localStorage.getItem('ttt-score');
+  if (saved) {
+    score = JSON.parse(saved);
+    updateScoreDisplay();
+  }
+}
+
+function saveScore() {
+  localStorage.setItem('ttt-score', JSON.stringify(score));
+}
+
+function updateScoreDisplay() {
+  scoreXEl.textContent = score.x;
+  scoreOEl.textContent = score.o;
+  scoreDrawEl.textContent = score.draw;
+}
+
+function initBoard() {
+  boardEl.innerHTML = '';
+  board = ['', '', '', '', '', '', '', '', ''];
+  currentPlayer = 'X';
+  gameActive = true;
+  turnEl.textContent = 'X';
+  statusEl.textContent = gameMode === 'bot'? 'Giliran Kamu' : 'Giliran X';
+
+  scoreOLabel.innerHTML = gameMode === 'bot'? 'Bot<br><span class="score-num" id="score-o">0</span>' : 'O<br><span class="score-num" id="score-o">0</span>';
+
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.index = i;
+    cell.addEventListener('click', handleCellClick);
+    boardEl.appendChild(cell);
+  }
+  updateScoreDisplay();
+}
+
+function handleCellClick(e) {
+  const index = e.target.dataset.index;
+
+  if (board[index]!== '' ||!gameActive) return;
+  if (gameMode === 'bot' && currentPlayer === 'O') return;
+
+  makeMove(index, currentPlayer);
+
+  if (gameActive && gameMode === 'bot' && currentPlayer === 'O') {
+    setTimeout(botMove, 400);
+  }
+}
+
+function makeMove(index, player) {
+  board[index] = player;
+  boardEl.children[index].textContent = player;
+  boardEl.children[index].classList.add(player.toLowerCase());
+
+  if (checkWin()) {
+    if (gameMode === 'bot') {
+      if (player === 'X') {
+        score.x++;
+        statusEl.textContent = 'Kamu Menang! 🎉';
+      } else {
+        score.o++;
+        statusEl.textContent = 'Bot Menang! 🤖';
+      }
+    } else {
+      if (player === 'X') score.x++;
+      else score.o++;
+      statusEl.textContent = `Pemain ${player} Menang! 🎉`;
+    }
+    gameActive = false;
+    highlightWin();
+    saveScore();
+    updateScoreDisplay();
+
+    setTimeout(initBoard, 1500);
+    return;
+  }
+
+  if (board.every(cell => cell!== '')) {
+    score.draw++;
+    statusEl.textContent = 'Seri! 🤝';
+    gameActive = false;
+    saveScore();
+    updateScoreDisplay();
+
+    setTimeout(initBoard, 1500);
+    return;
+  }
+
+  currentPlayer = player === 'X'? 'O' : 'X';
+  turnEl.textContent = currentPlayer;
+  statusEl.textContent = gameMode === 'bot'
+? (currentPlayer === 'X'? 'Giliran Kamu' : 'Giliran Heart candy...')
+    : `Giliran ${currentPlayer}`;
+}
+
+function checkWin() {
+  return winPatterns.some(pattern => {
+    const [a, b, c] = pattern;
+    return board[a] && board[a] === board[b] && board[a] === board[c];
+  });
+}
+
+function highlightWin() {
+  winPatterns.forEach(pattern => {
+    const [a, b, c] = pattern;
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      boardEl.children[a].classList.add('win');
+      boardEl.children[b].classList.add('win');
+      boardEl.children[c].classList.add('win');
+    }
+  });
+}
+
+function botMove() {
+  if (!gameActive) return;
+
+  let move;
+  if (difficulty === 'easy') {
+    move = getRandomMove();
+  } else {
+    move = getBestMove();
+  }
+
+  if (move!== -1) {
+    makeMove(move, 'O');
+  }
+}
+
+function getRandomMove() {
+  const emptyCells = board.map((val, idx) => val === ''? idx : null).filter(val => val!== null);
+  return emptyCells.length > 0? emptyCells[Math.floor(Math.random() * emptyCells.length)] : -1;
+}
+
+function getBestMove() {
+  for (let i = 0; i < 9; i++) {
+    if (board[i] === '') {
+      board[i] = 'O';
+      if (checkWinFor('O')) {
+        board[i] = '';
+        return i;
+      }
+      board[i] = '';
+    }
+  }
+
+  for (let i = 0; i < 9; i++) {
+    if (board[i] === '') {
+      board[i] = 'X';
+      if (checkWinFor('X')) {
+        board[i] = '';
+        return i;
+      }
+      board[i] = '';
+    }
+  }
+
+  if (board[4] === '') return 4;
+
+  const corners = [0, 2, 6, 8].filter(i => board[i] === '');
+  if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
+
+  const sides = [1, 3, 5, 7].filter(i => board[i] === '');
+  return sides.length > 0? sides[Math.floor(Math.random() * sides.length)] : -1;
+}
+
+function checkWinFor(player) {
+  return winPatterns.some(pattern => {
+    const [a, b, c] = pattern;
+    return board[a] === player && board[b] === player && board[c] === player;
+  });
+}
+
+modeBtns.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    modeBtns.forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    gameMode = e.target.dataset.mode;
+
+    if (gameMode === 'bot') {
+      difficultyDiv.classList.add('show');
+    } else {
+      difficultyDiv.classList.remove('show');
+    }
+    initBoard();
+  });
+});
+
+diffBtns.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    diffBtns.forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    difficulty = e.target.dataset.diff;
+    initBoard();
+  });
+});
+
+restartBtn.addEventListener('click', initBoard);
+
+resetScoreBtn.addEventListener('click', () => {
+  if (confirm('Reset semua score?')) {
+    score = { x: 0, o: 0, draw: 0 };
+    saveScore();
+    updateScoreDisplay();
+  }
+});
+
+loadScore();
+initBoard();
+</script>
+
+</body>
+</html>

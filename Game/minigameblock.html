@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Block</title>
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #ff9ac2, #ffd6e8, #fff5fa);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+#block-blast-game {
+  position: relative;
+  max-width: 370px;
+  width: 100%;
+  text-align: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Back button - sekarang di luar kotak game */
+.back-btn {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #c2185b;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 18px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.back-btn:hover {
+  background: #a01549;
+}
+
+.creator-tag {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #c2185a;
+  opacity: 0.8;
+}
+
+#block-blast-game h2 {
+  color: #c2185a;
+  margin: 0 0 10px 0;
+  font-size: 20px;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+#restart-btn {
+  background: #c2185b;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#game-board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 7px;
+  background: #333;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.cell {
+  width: 100%;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+}
+
+.cell.filled {
+  background: #ff6fa3;
+}
+
+.cell.preview {
+  background: rgba(255, 111, 163, 0.6);
+  box-shadow: 0 0 8px rgba(255, 111, 163, 0.6);
+}
+
+.cell.clear-anim {
+  animation: pop 0.25s ease;
+}
+
+@keyframes pop {
+ 0% { transform: scale(1); }
+ 50% { transform: scale(1.2); background: #fff; }
+ 100% { transform: scale(1); }
+}
+
+#blocks-container {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  min-height: 85px;
+}
+
+.block-piece {
+  display: grid;
+  gap: 4px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 10px;
+  touch-action: none;
+  user-select: none;
+}
+
+.block-cell {
+  width: 30px;
+  height: 30px;
+  background: #ff6fa3;
+  border-radius: 5px;
+}
+
+.block-piece.inactive {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.block-piece.dragging {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  opacity: 0.85;
+  pointer-events: none;
+  transition: none;
+  will-change: transform;
+}
+
+.game-tip {
+  font-size: 12px;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Tampilkan back button cuma di HP */
+@media (max-width: 768px) {
+.back-btn {
+    display: flex;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="/ponyndo.html" class="back-btn">🔙</a>
+
+<div id="block-blast-game">
+  <div class="creator-tag">By Heart candy</div>
+
+  <h2>Block Dash</h2>
+  <div class="game-info">
+    <span>Skor: <span id="score">0</span></span>
+    <button id="restart-btn">Restart</button>
+  </div>
+
+  <div id="game-board"></div>
+  <div id="blocks-container"></div>
+  <p class="game-tip">Tap blok buat muter. Tap & tahan buat geser.</p>
+</div>
+
+<script>
+const boardSize = 6;
+const board = document.getElementById('game-board');
+const blocksContainer = document.getElementById('blocks-container');
+const scoreEl = document.getElementById('score');
+const restartBtn = document.getElementById('restart-btn');
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playPopSound() {
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = 800;
+    osc.type = 'square';
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
+  } catch(e) {}
+}
+
+let grid = [];
+let score = 0;
+let currentPieces = [];
+
+function initGame() {
+  grid = Array(boardSize).fill(null).map(() => Array(boardSize).fill(0));
+  score = 0;
+  scoreEl.textContent = 0;
+  board.innerHTML = '';
+
+  for (let i = 0; i < boardSize * boardSize; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.index = i;
+    board.appendChild(cell);
+  }
+
+  generatePieces();
+}
+
+function rotatePiece(piece) {
+  const rows = piece.length;
+  const cols = piece[0].length;
+  let newPiece = Array(cols).fill(null).map(() => Array(rows).fill(0));
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      newPiece[c][rows - 1 - r] = piece[r][c];
+    }
+  }
+  return newPiece;
+}
+
+function generatePieces() {
+  blocksContainer.innerHTML = '';
+  currentPieces = [];
+
+  const shapes = [
+    [[1,1],[1,1]],
+    [[1,1,1]],
+    [[1],[1],[1]],
+    [[1,1,1],[0,1,0]],
+    [[1]],
+    [[1,1]],
+    [[1,1,1,1]],
+    [[1,1,0],[0,1,1]]
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    currentPieces.push(shape);
+
+    const pieceEl = document.createElement('div');
+    pieceEl.className = 'block-piece';
+    pieceEl.dataset.index = i;
+    pieceEl.style.gridTemplateColumns = `repeat(${shape[0].length}, 1fr)`;
+    renderPiece(pieceEl, shape);
+
+    pieceEl.addEventListener('touchstart', handleTouchStart, {passive: false});
+    blocksContainer.appendChild(pieceEl);
+  }
+}
+
+function renderPiece(pieceEl, shape) {
+  pieceEl.innerHTML = '';
+  pieceEl.style.gridTemplateColumns = `repeat(${shape[0].length}, 1fr)`;
+  shape.flat().forEach(val => {
+    const cell = document.createElement('div');
+    cell.className = val? 'block-cell' : '';
+    pieceEl.appendChild(cell);
+  });
+}
+
+let draggedPiece = null;
+let draggedIndex = null;
+let draggedEl = null;
+let touchStartTime = 0;
+let touchStartX = 0;
+let touchStartY = 0;
+let isDragging = false;
+
+function getCellFromTouch(x, y) {
+  const boardRect = board.getBoundingClientRect();
+  if (x < boardRect.left || x > boardRect.right || y < boardRect.top || y > boardRect.bottom) {
+    return null;
+  }
+
+  const cellSize = boardRect.width / boardSize;
+  const relativeX = x - boardRect.left;
+  const relativeY = y - boardRect.top;
+
+  const col = Math.floor(relativeX / cellSize);
+  const row = Math.floor(relativeY / cellSize);
+
+  if (row < 0 || row >= boardSize || col < 0 || col >= boardSize) return null;
+  return row * boardSize + col;
+}
+
+function handleTouchStart(e) {
+  e.preventDefault();
+  const touch = e.touches[0];
+
+  touchStartTime = Date.now();
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  isDragging = false;
+
+  draggedEl = e.currentTarget;
+  draggedIndex = draggedEl.dataset.index;
+  draggedPiece = currentPieces[draggedIndex];
+
+  document.addEventListener('touchmove', handleTouchMove, {passive: false});
+  document.addEventListener('touchend', handleTouchEnd);
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (!draggedEl) return;
+
+  const touch = e.touches[0];
+  const moveDistance = Math.sqrt(
+    Math.pow(touch.clientX - touchStartX, 2) +
+    Math.pow(touch.clientY - touchStartY, 2)
+  );
+
+  if (moveDistance > 8 &&!isDragging) {
+    isDragging = true;
+    draggedEl.classList.add('dragging');
+    draggedEl.style.transform = `translate(${touch.clientX - draggedEl.offsetWidth/2}px, ${touch.clientY - draggedEl.offsetHeight/2}px)`;
+  }
+
+  if (isDragging) {
+    draggedEl.style.transform = `translate(${touch.clientX - draggedEl.offsetWidth/2}px, ${touch.clientY - draggedEl.offsetHeight/2}px)`;
+
+    const cellIndex = getCellFromTouch(touch.clientX, touch.clientY);
+    clearPreview();
+    if (cellIndex!== null) {
+      showPreview(cellIndex);
+    }
+  }
+}
+
+function handleTouchEnd(e) {
+  if (!draggedEl) return;
+
+  const touchDuration = Date.now() - touchStartTime;
+  const touch = e.changedTouches[0];
+
+  if (!isDragging && touchDuration < 150) {
+    const index = parseInt(draggedEl.dataset.index);
+    currentPieces[index] = rotatePiece(currentPieces[index]);
+    renderPiece(draggedEl, currentPieces[index]);
+  }
+
+  if (isDragging) {
+    const cellIndex = getCellFromTouch(touch.clientX, touch.clientY);
+    if (cellIndex!== null) {
+      const row = Math.floor(cellIndex / boardSize);
+      const col = cellIndex % boardSize;
+
+      if (canPlacePiece(draggedPiece, row, col)) {
+        placePiece(draggedPiece, row, col);
+        draggedEl.classList.add('inactive');
+
+        if (document.querySelectorAll('.block-piece:not(.inactive)').length === 0) {
+          generatePieces();
+        }
+        clearLines();
+      }
+    }
+    draggedEl.classList.remove('dragging');
+    draggedEl.style.transform = '';
+  }
+
+  draggedEl = null;
+  draggedPiece = null;
+  draggedIndex = null;
+  isDragging = false;
+
+  clearPreview();
+  document.removeEventListener('touchmove', handleTouchMove);
+  document.removeEventListener('touchend', handleTouchEnd);
+}
+
+function canPlacePiece(piece, startRow, startCol) {
+  for (let r = 0; r < piece.length; r++) {
+    for (let c = 0; c < piece[0].length; c++) {
+      if (piece[r][c]) {
+        const newRow = startRow + r;
+        const newCol = startCol + c;
+        if (newRow >= boardSize || newCol >= boardSize || grid[newRow][newCol]) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+function placePiece(piece, startRow, startCol) {
+  for (let r = 0; r < piece.length; r++) {
+    for (let c = 0; c < piece[0].length; c++) {
+      if (piece[r][c]) {
+        grid[startRow + r][startCol + c] = 1;
+      }
+    }
+  }
+  updateBoard();
+}
+
+function showPreview(index) {
+  const row = Math.floor(index / boardSize);
+  const col = index % boardSize;
+  if (!canPlacePiece(draggedPiece, row, col)) return;
+  for (let r = 0; r < draggedPiece.length; r++) {
+    for (let c = 0; c < draggedPiece[0].length; c++) {
+      if (draggedPiece[r][c]) {
+        const cellIndex = (row + r) * boardSize + (col + c);
+        if (cellIndex < boardSize * boardSize) {
+          board.children[cellIndex].classList.add('preview');
+        }
+      }
+    }
+  }
+}
+
+function clearPreview() {
+  document.querySelectorAll('.cell.preview').forEach(cell => {
+    cell.classList.remove('preview');
+  });
+}
+
+function updateBoard() {
+  grid.forEach((row, r) => {
+    row.forEach((val, c) => {
+      const cell = board.children[r * boardSize + c];
+      cell.classList.toggle('filled', val === 1);
+    });
+  });
+}
+
+function clearLines() {
+  let linesCleared = 0;
+  let clearedCells = [];
+
+  for (let r = 0; r < boardSize; r++) {
+    if (grid[r].every(cell => cell === 1)) {
+      for (let c = 0; c < boardSize; c++) {
+        clearedCells.push(r * boardSize + c);
+      }
+      grid[r] = Array(boardSize).fill(0);
+      linesCleared++;
+    }
+  }
+
+  for (let c = 0; c < boardSize; c++) {
+    if (grid.every(row => row[c] === 1)) {
+      for (let r = 0; r < boardSize; r++) {
+        clearedCells.push(r * boardSize + c);
+        grid[r][c] = 0;
+      }
+      linesCleared++;
+    }
+  }
+
+  if (linesCleared > 0) {
+    score += linesCleared * 100;
+    scoreEl.textContent = score;
+    clearedCells.forEach(idx => {
+      board.children[idx].classList.add('clear-anim');
+    });
+    playPopSound();
+    setTimeout(() => {
+      updateBoard();
+    }, 250);
+  }
+}
+
+restartBtn.addEventListener('click', () => {
+  initGame();
+});
+
+initGame();
+</script>
+
+</body>
+</html>
