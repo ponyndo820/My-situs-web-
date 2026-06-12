@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #ff9ac4, #ff9ac3, #ff9ac2, #ffd6e8, #fff5fa);
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #ff5ac2;
+  position: relative;
+  z-index: 1000;
+}
+
+.nav-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: pink;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.nav-links {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 50px;
+  left: 15px;
+  right: auto;
+  width: 180px;
+  background: #333;
+  padding: 12px;
+  gap: 8px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.nav-links.active {
+  display: flex;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.hamburger {
+  display: none;
+  align-items: center;
+  cursor: pointer;
+  background: pink;
+  padding: 6px 10px;
+  border-radius: 5px;
+  z-index: 1001;
+}
+
+.hamburger div span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: white;
+  margin: 4px 0;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    justify-content: flex-start;
+  }
+  
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 50px;
+    left: 15px;
+    right: auto;
+    width: 60px;
+    background: #ff5ac2;
+    padding: 12px;
+    gap: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+  
+  .nav-title {
+    font-size: 30px;
+    font-weight: 900;
+    flex: 1;
+    text-align: center;
+    margin-right: 40px;
+  }
+}
+
+.image-container {
+  margin: 20px;
+  transform: translateX(-10px);
+}
+
+.image-text {
+  color: #c2185b;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 5px 10px;
+  margin: 0;
+  text-align: left;
+  display: block;
+}
+
+.image-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.game-title-link-1 {
+  text-decoration: none;
+  display: block;
+}
+
+.game-title-1 {
+  color: #c2185a;
+  font-size: 22px;
+  font-weight: 900;
+  text-align: left;
+  padding-left: 30px;
+  margin: 10px 0;
+}
+
+.game-title-link-2 {
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+.game-title-2 {
+  color: #c2185a;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 5px 0 8px 0;
+}
+
+.image-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.image-wrapper img.img-large {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.image-wrapper img.img-small-1,
+.image-wrapper img.img-small-2 {
+  width: 150px;
+  height: 250px;
+  padding: 0;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.image-wrapper img.img-small-2 {
+  margin-left: 50px; /* Geser gambar 3 ke tengah. Ubah angka ini sesuai kebutuhan */
+}
+
+.image-url {
+  align-self: stretch;
+}
+
+.image-url a {
+  color: #c2185b;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.image-url a:hover {
+  text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="hamburger" onclick="toggleMenu()">
+    <div>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  
+  <h1 class="nav-title">Welcome to my website</h1>
+  
+  <div class="nav-links" id="navLinks">
+    <a href="/Menu/Home.html">Home</a>
+    <a href="/Menu/About.html">About</a>
+    <a href="/Menu/Contact.html">Contact</a>
+    <a href="/Menu/Blog.html">Blog</a>
+  </div>
+</nav>
+
+<script>
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('active');
+}
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('active');
+  });
+});
+</script>
+
+<div class="image-container">
+  <div class="image-text">Tentang:</div>
+  <div class="image-text">
+    Heart candy adalah seekor kuda pony betina ia tinggal di Ponylille dan dia suka sekali bermain dan berteman.
+  </div>
+  
+  <div class="image-list">
+    <!-- Gambar 1 - tetap di tempat -->
+    <div class="image-wrapper">
+      <img src="/Media/image1.jpg" alt="Foto 1" class="img-large">
+      <div class="image-url">
+        <ul>
+          <li><a href="https://whatsapp.com/channel/0029Vb6en2iAu3aXA7AcFI0Y" target="_blank">WhatsApp Channel</a></li>
+          <li><a href="https://chat.whatsapp.com/HbdhtLnpBF3ClL1jSPdZPA?s=cl&p=a&mlu=0&ilr=0">WhatsApp Group</a></li>
+          <li><a href="https://youtube.com/@ponyndo?si=MP6Mp7FeZlxcsR6K">My YouTube channel</a></li>
+          <li><a href="https://www.instagram.com/ponyndo1_original?igsh=NDZ0dmYwNDltZHFu">Instagram</a></li>
+          <li><a href="https://saweria.co/Ponyndo">Donasi</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <a href="/Game/minigameblock.html" class="game-title-link-1">
+      <h2 class="game-title-1">Block Dash</h2>
+    </a>
+
+    <!-- Gambar 2 & 3 - sejajar -->
+    <div class="image-wrapper">
+      <a href="/Game/minigameblock.html">
+        <img src="/Media/image2.png" alt="Foto 2" class="img-small-1">
+      </a>
+      <a href="/Game/minigametictactoe.html">
+        <img src="/media/image3.png" alt="Foto 3" class="img-small-2">
+      </a>
+      <a href="/Game/minigametictactoe.html" cclass="game-title-link-2"
+      <h3 class="game-title-2">Tic Tac Toe</h3>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

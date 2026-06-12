@@ -1,0 +1,93 @@
+  <!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 15px;
+  background: #333;
+  color: white;
+  position: relative;
+}
+
+.nav-links {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.back-btn {
+  display: none;
+  align-items: center;
+  cursor: pointer;
+  background: #444;
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  text-decoration: none;
+  color: white;
+}
+
+.back-btn:hover {
+  background: #555;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 50px;
+    left: 15px;
+    right: auto;
+    width: 180px;
+    background: #333;
+    padding: 12px;
+    gap: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .back-btn {
+    display: flex;
+  }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  
+  <a href="/ponyndo.html" class="back-btn">🔙</a>
+
+<script>
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('active');
+}
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('active');
+  });
+});
+</script>
+
+</body>
+</html>
