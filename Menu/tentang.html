@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tentang kami</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #ff8ac4 0%, #ffd6e8 100%);
+      font-family: 'Segoe UI', sans-serif;
+      padding-bottom: 50px;
+    }
+    
+    nav {
+      background: pink;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .menu-btn {
+      width: 30px;
+      height: 22px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .menu-btn span {
+      height: 4px;
+      background: #ff4da6;
+      border-radius: 3px;
+      transition: 0.3s;
+    }
+    
+    .menu-btn.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+    .menu-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-btn.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+    
+    nav .logo {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ff4da6;
+      margin: 0 auto;
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100vh;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding-top: 80px;
+      transition: 0.3s;
+      z-index: 999;
+    }
+    
+    .sidebar.active {
+      left: 0;
+    }
+    
+    .sidebar ul {
+      list-style: none;
+    }
+    
+    .sidebar a {
+      display: block;
+      padding: 15px 30px;
+      text-decoration: none;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    .sidebar a:hover {
+      background: #fff5fa;
+      color: #ff4da6;
+      border-left: 4px solid #ff4da6;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      display: none;
+      z-index: 998;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+    
+    .konten {
+      padding: 30px 20px;
+    }
+    
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 25px;
+      margin: 20px auto;
+      max-width: 500px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    
+    .box img {
+      width: 100%;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .box h1 {
+      color: #ff4da6;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    .box p {
+      text-align: center;
+      line-height: 1.6;
+      color: #333;
+      font-size: 1.05rem;
+      margin-bottom: -1px;
+    }
+    
+    .box p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="menu-btn" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo">Tentang Kami</div>
+  </nav>
+  
+  <div class="sidebar" id="sidebar">
+    <ul>
+      <li><a href="/menu/Home.html" onclick="toggleMenu()">Home</a></li>
+      <li><a href="/menu/tentang.html" onclick="toggleMenu()">Tentang</a></li>
+      <li><a href="/menu/kontak.html" onclick="toggleMenu()">Kontak</a></li>
+       <li><a href="/Game/desa_kuda_pony.html" onclick="toggleMenu()">Desa kuda pony </a></li>
+    </ul>
+  </div>
+  
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <div class="konten">
+  
+    <!-- BOX: Tentang kami-->
+    <div class="box" id="tentang">
+      <h1>Tentang kami</h1>
+      <p>Kami hanya ingin menciptakan komunitas MLP yang baik dan ramah.</p>
+      <p>kamu juga dapat menonton berbagai film My little pony dengan mengunjungi channel YouTube kami.</p>
+      <p>kamu juga dapat berhubungan dengan fandom MLP dan fandom lain nya, degan mengunjungi Grup whatsApp yang saya buat.</p>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('sidebar').classList.toggle('active');
+      document.getElementById('overlay').classList.toggle('active');
+      document.querySelector('.menu-btn').classList.toggle('active');
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontak</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #ff8ac4 0%, #ffd6e8 100%);
+      font-family: 'Segoe UI', sans-serif;
+      padding-bottom: 50px;
+    }
+    
+    nav {
+      background: pink;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .menu-btn {
+      width: 30px;
+      height: 22px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .menu-btn span {
+      height: 4px;
+      background: #ff4da6;
+      border-radius: 3px;
+      transition: 0.3s;
+    }
+    
+    .menu-btn.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+    .menu-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-btn.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+    
+    nav .logo {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ff4da6;
+      margin: 0 auto;
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100vh;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding-top: 80px;
+      transition: 0.3s;
+      z-index: 999;
+    }
+    
+    .sidebar.active {
+      left: 0;
+    }
+    
+    .sidebar ul {
+      list-style: none;
+    }
+    
+    .sidebar a {
+      display: block;
+      padding: 15px 30px;
+      text-decoration: none;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    .sidebar a:hover {
+      background: #fff5fa;
+      color: #ff4da6;
+      border-left: 4px solid #ff4da6;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      display: none;
+      z-index: 998;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+    
+    .konten {
+      padding: 30px 20px;
+    }
+    
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 25px;
+      margin: 20px auto;
+      max-width: 500px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    
+    .box p {
+      text-align: center;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    /* Style box kontak */
+    .sosmed-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .sosmed-box {
+      text-align: center;
+    }
+
+    .sosmed-box h1 {
+      color: #ff4da6;
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    .sosmed-link {
+      text-decoration: none;
+      background: #fff5fa;
+      color: #ff4da6;
+      padding: 14px 20px;
+      border-radius: 15px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+      border: 2px solid #ff4da6;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+    }
+
+    .sosmed-link:active {
+      background: #ff4da6;
+      color: white;
+    }
+
+    .sosmed-link:hover {
+      background: #ff4da6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,77,166,0.4);
+    }
+
+    .sosmed-link.clicked {
+      background: #ff4da6 !important;
+      color: white !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 12px rgba(255,77,166,0.4) !important;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="menu-btn" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo">Kontak Kami</div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <ul>
+      <li><a href="/menu/Home.html" onclick="toggleMenu()">Home</a></li>
+      <li><a href="/menu/tentang.html" onclick="toggleMenu()">Tentang</a></li>
+      <li><a href="kontak.html" onclick="toggleMenu()">Kontak</a></li>
+       <li><a href="/Game/desa_kuda_pony.html" onclick="toggleMenu()">Desa kuda pony </a></li>
+    </ul>
+  </div>
+  
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <div class="konten">
+  
+    <!-- BOX: Kontak Langsung -->
+    <div class="box sosmed-box" id="kontak-langsung">
+      <h1>Kontak Kami</h1>
+      <p>Ada pertanyaan? silahkan hubungi kami✨</p>
+      <div class="sosmed-links">
+        <a href="rna376388@gmail.com" class="sosmed-link">📧 Email</a>
+        <a href="tel:+6285823709413" class="sosmed-link">📞 Phone</a>
+        <a href="https://wa.me/6285823709413" target="_blank" class="sosmed-link" onclick="handleClick(event, this)">💬 WhatsApp</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('sidebar').classList.toggle('active');
+      document.getElementById('overlay').classList.toggle('active');
+      document.querySelector('.menu-btn').classList.toggle('active');
+    }
+
+    function handleClick(e, el) {
+      e.preventDefault();
+      const url = el.href;
+      const target = el.target;
+      
+      el.classList.add('clicked');
+      
+      setTimeout(() => {
+        el.classList.remove('clicked');
+      }, 1000);
+      
+      setTimeout(() => {
+        if(target === '_blank') {
+          window.open(url, '_blank');
+        } else {
+          window.location.href = url;
+        }
+      }, 300);
+    }
+
+    window.addEventListener('focus', () => {
+      document.querySelectorAll('.sosmed-link').forEach(link => {
+        link.classList.remove('clicked');
+      });
+    });
+  </script>
+
+</body>
+</html>
